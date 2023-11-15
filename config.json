@@ -1,0 +1,12 @@
+{
+  "http": {
+    "http_port": "8001"
+  },
+  "database": {
+    "hostname": "localhost",
+    "port": 3306,
+    "username": "root",
+    "password": "willy",
+    "database_name": "bansos"
+  }
+}
