@@ -60,6 +60,9 @@ func (h *UserHandler) GetUserHandler(c echo.Context) error {
 			"name": user.Name,
 			"email": user.Email,
 			"phone": user.Phone,
+			"role": user.Role,
+			"nik": user.Nik,
+			"no_kk": user.NoKK,
 		},
 	})
 }

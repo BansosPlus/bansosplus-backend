@@ -163,6 +163,7 @@ func (h *AuthHandler) Login(c echo.Context) error {
             "name": exist_user.Name,
             "email": exist_user.Email,
             "phone": exist_user.Phone,
+            "role": exist_user.Role,
             "token": token,
         },
     })
