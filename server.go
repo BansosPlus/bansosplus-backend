@@ -62,7 +62,7 @@ func main() {
 	}
 	defer db.Close()
 
-	err = gormDB.AutoMigrate(&model.User{})
+	err = gormDB.AutoMigrate(&model.User{}, &model.Bansos{}, &model.Feedback{}, &model.Grocery{}, &model.QRCode{}, &model.BansosRegistration{})
 	if err != nil {
 		log.WithFields(log.Fields{"error": err}).Fatal("Error to migrate database")
 		return
