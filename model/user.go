@@ -4,6 +4,7 @@ import (
     "golang.org/x/crypto/bcrypt"
     "regexp"
     "time"
+    "github.com/shopspring/decimal"
 )
 
 type RoleEnum string
@@ -13,14 +14,17 @@ const (
 )
 
 type User struct {
-    ID        int       `json:"id"          gorm:"primary_key;auto_increment"`
-    Name      string    `json:"name"        gorm:"size:255;not null"`
-    Email     string    `json:"email"       gorm:"size:255;not null;unique"`
-    Phone     string    `json:"phone"       gorm:"size:255;not null;unique"`
-    Password  string    `json:"password"    gorm:"size:255;not null"`
-    Role      RoleEnum  `json:"role"        gorm:"type:enum('admin','user');not null;default:'user'"`
-    CreatedAt time.Time `json:"created_at"  gorm:"type:datetime;autoCreateTime"`
-    UpdatedAt time.Time `json:"updated_at"  gorm:"type:datetime;autoUpdateTime"`
+    ID        int               `json:"id"          gorm:"primary_key;auto_increment"`
+    Name      string            `json:"name"        gorm:"size:255;not null"`
+    Nik       string            `json:"nik"         gorm:"size:255;null;unique"`
+    NoKK      string            `json:"nokk"        gorm:"size:255;null"`
+    Income    decimal.Decimal   `json:"income"      gorm:"type:decimal(20,8);null"`
+    Email     string            `json:"email"       gorm:"size:255;not null;unique"`
+    Phone     string            `json:"phone"       gorm:"size:255;not null;unique"`
+    Password  string            `json:"password"    gorm:"size:255;not null"`
+    Role      RoleEnum          `json:"role"        gorm:"type:enum('admin','user');not null;default:'user'"`
+    CreatedAt time.Time         `json:"created_at"  gorm:"type:datetime;autoCreateTime"`
+    UpdatedAt time.Time         `json:"updated_at"  gorm:"type:datetime;autoUpdateTime"`
 }
 
 func ValidateEmail(email string) bool {
