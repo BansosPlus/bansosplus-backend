@@ -5,8 +5,8 @@
   "database": {
     "hostname": "localhost",
     "port": 3306,
-    "username": "ziantsabit",
-    "password": "Akatsuki123@#$",
-    "database_name": "bansosplus"
+    "username": "root",
+    "password": "willy",
+    "database_name": "bansos"
   }
 }
