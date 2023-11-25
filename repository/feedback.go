@@ -23,3 +23,15 @@ func NewFeedbackRepository(db *gorm.DB) FeedbackRepository {
 func (r *FeedbackRepositoryImpl) AddFeedback(feedback *model.Feedback) error {
     return r.db.Create(feedback).Error
 }
+
+func (r *FeedbackRepositoryImpl) GetFeedback(feedback *model.Feedback) error {
+    return r.db.Create(feedback).Error
+}
+
+func (r *FeedbackRepositoryImpl) UpdateFeedback(feedback *model.Feedback) error {
+    return r.db.Create(feedback).Error
+}
+
+func (r *FeedbackRepositoryImpl) DeleteFeedback(feedback *model.Feedback) error {
+    return r.db.Create(feedback).Error
+}

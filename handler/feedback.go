@@ -44,3 +44,81 @@ func (h *FeedbackHandler) AddFeedback(c echo.Context) error {
         },
     })
 }
+
+func (h *FeedbackHandler) GetFeedback(c echo.Context) error {
+    var feedback model.Feedback
+
+    // Bind payload
+    if err := c.Bind(&feedback); err != nil || feedback.UserID == "" || feedback.Score == "" {
+        return c.JSON(http.StatusBadRequest, echo.Map{
+            "code": http.StatusBadRequest,
+            "status": "error",
+            "message": "Invalid request payload",
+        })
+    }
+
+    // Success
+    return c.JSON(http.StatusOK, echo.Map{
+        "code": http.StatusOK,
+        "status": "success",
+        "message": "Feedback added successfully",
+        "data": echo.Map{
+            "feedback_id": feedback.ID,
+            "user_id": feedback.UserID,
+            "score": feedback.Score,
+            "description": feedback.Description,
+        },
+    })
+}
+
+func (h *FeedbackHandler) UpdateFeedback(c echo.Context) error {
+    var feedback model.Feedback
+
+    // Bind payload
+    if err := c.Bind(&feedback); err != nil || feedback.UserID == "" || feedback.Score == "" {
+        return c.JSON(http.StatusBadRequest, echo.Map{
+            "code": http.StatusBadRequest,
+            "status": "error",
+            "message": "Invalid request payload",
+        })
+    }
+
+    // Success
+    return c.JSON(http.StatusOK, echo.Map{
+        "code": http.StatusOK,
+        "status": "success",
+        "message": "Feedback added successfully",
+        "data": echo.Map{
+            "feedback_id": feedback.ID,
+            "user_id": feedback.UserID,
+            "score": feedback.Score,
+            "description": feedback.Description,
+        },
+    })
+}
+
+func (h *FeedbackHandler) DeleteFeedback(c echo.Context) error {
+    var feedback model.Feedback
+
+    // Bind payload
+    if err := c.Bind(&feedback); err != nil || feedback.UserID == "" || feedback.Score == "" {
+        return c.JSON(http.StatusBadRequest, echo.Map{
+            "code": http.StatusBadRequest,
+            "status": "error",
+            "message": "Invalid request payload",
+        })
+    }
+
+    // Success
+    return c.JSON(http.StatusOK, echo.Map{
+        "code": http.StatusOK,
+        "status": "success",
+        "message": "Feedback added successfully",
+        "data": echo.Map{
+            "feedback_id": feedback.ID,
+            "user_id": feedback.UserID,
+            "score": feedback.Score,
+            "description": feedback.Description,
+        },
+    })
+}
