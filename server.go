@@ -81,11 +81,13 @@ func main() {
 	// Repository
 	authRepository := repository.NewAuthRepository(gormDB)
 	userRepository := repository.NewUserRepository(gormDB)
+	feedbackRepository := repository.NewFeedbackRepository(gormDB)
 
 	// Handler
 	authHandler := handler.NewAuthHandler(authRepository)
 	userHandler := handler.NewUserHandler(userRepository)
-
+	feedbackHandler := handler.NewFeedbackHandler(feedbackRepository)
+	
 	// Router
 	api := e.Group("/api")
 	api.POST("/register", authHandler.Register)
@@ -95,6 +97,12 @@ func main() {
 	apiAuth := api.Group("/", authMiddleware)
 	// NOTE: This route is an example middleware route
 	apiAuth.GET("users", userHandler.GetUserHandler)
+	// feedback
+	apiAuth.POST("feedbacks", feedbackHandler.AddFeedbackHandler)
+	apiAuth.PUT("feedbacks", feedbackHandler.UpdateFeedbackHandler)
+	apiAuth.DELETE("feedbacks", feedbackHandler.DeleteFeedbackHandler)
+	apiAuth.GET("users/feedbacks", feedbackHandler.GetFeedbackByUserIDHandler)
+	apiAuth.GET("bansos/feedbacks", feedbackHandler.GetFeedbackByBansosIDHandler)
 
 	e.Logger.Fatal(e.Start(":" + configuration.Http.HttpPort))
 }

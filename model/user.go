@@ -16,7 +16,7 @@ const (
 type User struct {
     ID        int               `json:"id"          gorm:"primary_key;auto_increment"`
     Name      string            `json:"name"        gorm:"size:255;not null"`
-    Nik       string            `json:"nik"         gorm:"size:255;null;unique"`
+    Nik       string            `json:"nik"         gorm:"size:255;null"`
     NoKK      string            `json:"nokk"        gorm:"size:255;null"`
     Income    decimal.Decimal   `json:"income"      gorm:"type:decimal(20,8);null"`
     Email     string            `json:"email"       gorm:"size:255;not null;unique"`

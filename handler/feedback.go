@@ -3,8 +3,8 @@ package handler
 import (
     "net/http"
     "github.com/labstack/echo"
+    "github.com/dgrijalva/jwt-go"
     
-    "github.com/BansosPlus/bansosplus-backend.git/middleware"
     "github.com/BansosPlus/bansosplus-backend.git/model"
     "github.com/BansosPlus/bansosplus-backend.git/repository"
 )
@@ -44,7 +44,7 @@ func (h *FeedbackHandler) AddFeedbackHandler(c echo.Context) error {
     feedback.UserID = int(userID)
 
     // Bind payload
-    if err := c.Bind(&feedback); err != nil || feedback.BansosID == "" || feedback.Score == "" {
+    if err := c.Bind(&feedback); err != nil || feedback.BansosID == 0 || feedback.Score == 0 {
         return c.JSON(http.StatusBadRequest, echo.Map{
             "code":    http.StatusBadRequest,
             "status":  "error",
@@ -68,6 +68,7 @@ func (h *FeedbackHandler) AddFeedbackHandler(c echo.Context) error {
         "data": echo.Map{
             "feedback_id":  feedback.ID,
             "user_id":      feedback.UserID,
+            "bansos_id":    feedback.BansosID,
             "score":        feedback.Score,
             "description":  feedback.Description,
         },
@@ -95,7 +96,7 @@ func (h *FeedbackHandler) GetFeedbackByUserIDHandler(c echo.Context) error {
         })
     }
 
-    feedbacks, err := h.feedbackRepository.GetFeedbacksByUserID(int(userID))
+    feedbacks, err := h.feedbackRepository.GetFeedbackByUserID(int(userID))
     if err != nil {
         return c.JSON(http.StatusInternalServerError, echo.Map{
             "code":    http.StatusInternalServerError,
@@ -126,7 +127,7 @@ func (h *FeedbackHandler) GetFeedbackByBansosIDHandler(c echo.Context) error {
         })
     }
 
-    feedbacks, err := h.feedbackRepository.GetFeedbacksByBansosID(int(userID))
+    feedbacks, err := h.feedbackRepository.GetFeedbackByBansosID(int(request.BansosID))
     if err != nil {
         return c.JSON(http.StatusInternalServerError, echo.Map{
             "code":    http.StatusInternalServerError,
@@ -147,11 +148,37 @@ func (h *FeedbackHandler) UpdateFeedbackHandler(c echo.Context) error {
     var feedback model.Feedback
 
     // Bind payload
-    if err := c.Bind(&feedback); err != nil || feedback.ID == 0 || feedback.Score == ""  {
+    if err := c.Bind(&feedback); err != nil || feedback.ID == 0 || feedback.Score == 0  {
         return c.JSON(http.StatusBadRequest, echo.Map{
             "code":    http.StatusBadRequest,
             "status":  "error",
             "message": "Invalid request payload",
+        })
+    }
+
+    token, ok := c.Get("token").(jwt.MapClaims)
+    if !ok {
+        return c.JSON(http.StatusUnauthorized, echo.Map{
+            "code":    http.StatusUnauthorized,
+            "status":  "error",
+            "message": "Unauthorized",
+        })
+    }
+
+    userID, ok := token["id"].(float64)
+    if !ok {
+        return c.JSON(http.StatusUnauthorized, echo.Map{
+            "code":    http.StatusUnauthorized,
+            "status":  "error",
+            "message": "Invalid token format",
+        })
+    }
+
+    if int(userID) != feedback.UserID {
+        return c.JSON(http.StatusForbidden, echo.Map{
+            "code":    http.StatusForbidden,
+            "status":  "error",
+            "message": "User does not have permission to update this feedback",
         })
     }
 
@@ -180,10 +207,30 @@ func (h *FeedbackHandler) UpdateFeedbackHandler(c echo.Context) error {
 }
 
 func (h *FeedbackHandler) DeleteFeedbackHandler(c echo.Context) error {
-    var feedback model.Feedback
+    
+    token, ok := c.Get("token").(jwt.MapClaims)
+    if !ok {
+        return c.JSON(http.StatusUnauthorized, echo.Map{
+            "code":    http.StatusUnauthorized,
+            "status":  "error",
+            "message": "Unauthorized",
+        })
+    }
 
+    userID, ok := token["id"].(float64)
+    if !ok {
+        return c.JSON(http.StatusUnauthorized, echo.Map{
+            "code":    http.StatusUnauthorized,
+            "status":  "error",
+            "message": "Invalid token format",
+        })
+    }
+
+    var request struct {
+        ID int `json:"id" form:"id"`
+    }
     // Bind payload
-    if err := c.Bind(&feedback); err != nil || feedback.ID == 0 {
+    if err := c.Bind(&request); err != nil {
         return c.JSON(http.StatusBadRequest, echo.Map{
             "code":    http.StatusBadRequest,
             "status":  "error",
@@ -191,8 +238,17 @@ func (h *FeedbackHandler) DeleteFeedbackHandler(c echo.Context) error {
         })
     }
 
+    feedback, _ := h.feedbackRepository.GetFeedbackByID(int(request.ID))
     // Assuming you have a method in your repository to delete feedback
-    if err := h.feedbackRepository.DeleteFeedback(&feedback); err != nil {
+    if int(userID) != feedback.UserID {
+        return c.JSON(http.StatusForbidden, echo.Map{
+            "code":    http.StatusForbidden,
+            "status":  "error",
+            "message": "User does not have permission to delete this feedback",
+        })
+    }
+
+    if err := h.feedbackRepository.DeleteFeedback(feedback); err != nil {
         return c.JSON(http.StatusInternalServerError, echo.Map{
             "code":    http.StatusInternalServerError,
             "status":  "error",
@@ -207,9 +263,6 @@ func (h *FeedbackHandler) DeleteFeedbackHandler(c echo.Context) error {
         "message": "Feedback deleted successfully",
         "data": echo.Map{
             "feedback_id":  feedback.ID,
-            "user_id":      feedback.UserID,
-            "score":        feedback.Score,
-            "description":  feedback.Description,
         },
     })
 }
