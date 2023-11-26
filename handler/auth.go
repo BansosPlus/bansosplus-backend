@@ -145,7 +145,7 @@ func (h *AuthHandler) Login(c echo.Context) error {
     }
 
     // Generate a JWT token
-    token, err := middleware.GenerateToken(&user)
+    token, err := middleware.GenerateToken(exist_user)
     if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"code":    http.StatusInternalServerError,
