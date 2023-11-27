@@ -109,6 +109,7 @@ func main() {
 	// bansos registration
 	apiAuth.POST("bansos-registration", bansosRegistrationHandler.RegisterBansosHandler)
 	apiAuth.GET("bansos-registration/on-progress", bansosRegistrationHandler.GetOnProgressBansosRegisHandler)
+	apiAuth.GET("users/bansos-registration", bansosRegistrationHandler.GetBansosRegisByUserIDHandler)
 	apiAuth.PUT("bansos-registration/accept", bansosRegistrationHandler.AcceptBansosRegisHandler)
 	apiAuth.PUT("bansos-registration/reject", bansosRegistrationHandler.RejectBansosRegisHandler)
 

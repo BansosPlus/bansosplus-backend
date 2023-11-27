@@ -239,3 +239,46 @@ func (h *BansosRegistrationHandler) GetOnProgressBansosRegisHandler(c echo.Conte
         "message": "Unauthorized",
     })
 }
+
+func (h *BansosRegistrationHandler) GetBansosRegisByUserIDHandler(c echo.Context) error {
+    var bansosRegistration *model.BansosRegistration
+
+    token, ok := c.Get("token").(jwt.MapClaims)
+    if !ok {
+        return c.JSON(http.StatusUnauthorized, echo.Map{
+            "code":    http.StatusUnauthorized,
+            "status":  "error",
+            "message": "Unauthorized",
+        })
+    }
+
+    userID, ok := token["id"].(float64)
+    if !ok {
+        return c.JSON(http.StatusUnauthorized, echo.Map{
+            "code":    http.StatusUnauthorized,
+            "status":  "error",
+            "message": "Invalid token format",
+        })
+    }
+
+    bansosRegistration, err := h.bansosRegistrationRepository.GetBansosRegisByUserID(int(userID))
+    if err != nil {
+        return c.JSON(http.StatusInternalServerError, echo.Map{
+            "code":    http.StatusInternalServerError,
+            "status":  "error",
+            "message": "Failed to retrieve bansos registration",
+        })
+    }
+
+    return c.JSON(http.StatusOK, echo.Map{
+        "code": http.StatusOK,
+        "status": "success",
+        "message": "Bansos registration retrieved successfully",
+        "data": echo.Map{
+            "id": bansosRegistration.ID,
+            "user_id": bansosRegistration.UserID,
+            "bansos_id": bansosRegistration.BansosID,
+            "status": bansosRegistration.Status,
+        },
+    })
+}
