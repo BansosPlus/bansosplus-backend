@@ -12,6 +12,7 @@ type BansosRegistrationRepository interface {
     AcceptBansosRegis(bansosRegistration *model.BansosRegistration) error
     RejectBansosRegis(bansosRegistration *model.BansosRegistration) error
     GetBansosRegisByID(id int) (*model.BansosRegistration, error)
+    GetBansosRegisByStatus(status string) ([]*model.BansosRegistration, error)
 }
 
 type BansosRegistrationRepositoryImpl struct {
@@ -48,4 +49,12 @@ func (r *BansosRegistrationRepositoryImpl) RejectBansosRegis(bansosRegistration 
         Where("id = ?", bansosRegistration.ID).
         Updates(map[string]interface{}{"status": "REJECTED", "approval_at": time.Now()}).
         Error
+}
+
+func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByStatus(status string) ([]*model.BansosRegistration, error) {
+    var bansosRegistrations []*model.BansosRegistration
+	if err := r.db.Table("bansos_registrations").Where("status = ?", status).Find(&bansosRegistrations).Error; err != nil {
+		return nil, err
+	}
+	return bansosRegistrations, nil
 }

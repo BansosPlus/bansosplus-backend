@@ -17,6 +17,7 @@ func GenerateToken(user *model.User) (string, error) {
 	claims["id"] = user.ID
 	claims["name"] = user.Name
 	claims["email"] = user.Email
+	claims["role"] = user.Role
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 
 	// Sign the token with a secret key
