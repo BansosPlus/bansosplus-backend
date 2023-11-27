@@ -19,7 +19,7 @@ func NewBansosRegistrationHandler(bansosRegistrationRepository repository.Bansos
     }
 }
 
-func (h *BansosRegistrationHandler) RegisterBansos(c echo.Context) error {
+func (h *BansosRegistrationHandler) RegisterBansosHandler(c echo.Context) error {
     var bansosRegistration model.BansosRegistration
 
     token, ok := c.Get("token").(jwt.MapClaims)
@@ -52,11 +52,11 @@ func (h *BansosRegistrationHandler) RegisterBansos(c echo.Context) error {
         })
     }
 
-    if err := h.feedbackRepository.RegisterBansos(&bansosRegistration); err != nil {
+    if err := h.bansosRegistrationRepository.RegisterBansos(&bansosRegistration); err != nil {
         return c.JSON(http.StatusInternalServerError, echo.Map{
             "code": http.StatusInternalServerError,
             "status": "error",
-            "message": "Failed to register user",
+            "message": "Failed to do bansos registeration",
         })
     }
 
@@ -64,11 +64,116 @@ func (h *BansosRegistrationHandler) RegisterBansos(c echo.Context) error {
     return c.JSON(http.StatusOK, echo.Map{
         "code":    http.StatusOK,
         "status":  "success",
-        "message": "Feedback added successfully",
+        "message": "Bansos registration added successfully",
         "data": echo.Map{
             "id": bansosRegistration.ID,
             "user_id": bansosRegistration.UserID,
             "bansos_id": bansosRegistration.BansosID,
+            "status": bansosRegistration.Status,
+        },
+    })
+}
+
+func (h *BansosRegistrationHandler) AcceptBansosRegisHandler(c echo.Context) error {
+    _, ok := c.Get("token").(jwt.MapClaims)
+    if !ok {
+        return c.JSON(http.StatusUnauthorized, echo.Map{
+            "code":    http.StatusUnauthorized,
+            "status":  "error",
+            "message": "Unauthorized",
+        })
+    }
+    
+    var request struct {
+        BansosRegistrationID int `json:"bansos_registration_id" form:"bansos_registration_id"`
+    }
+
+    if err := c.Bind(&request); err != nil {
+        return c.JSON(http.StatusBadRequest, echo.Map{
+            "code":    http.StatusBadRequest,
+            "status":  "error",
+            "message": "Invalid request payload",
+        })
+    }
+
+    bansosRegistration, err := h.bansosRegistrationRepository.GetBansosRegisByID(int(request.BansosRegistrationID))
+    if err != nil {
+        return c.JSON(http.StatusInternalServerError, echo.Map{
+            "code":    http.StatusInternalServerError,
+            "status":  "error",
+            "message": "Registration Not Found",
+        })
+    }
+
+    if err := h.bansosRegistrationRepository.AcceptBansosRegis(bansosRegistration); err != nil {
+        return c.JSON(http.StatusInternalServerError, echo.Map{
+            "code":    http.StatusInternalServerError,
+            "status":  "error",
+            "message": "Failed to accept registration",
+        })
+    }
+    // Success
+    return c.JSON(http.StatusOK, echo.Map{
+        "code":    http.StatusOK,
+        "status":  "success",
+        "message": "Registration accepted successfully",
+        "data": echo.Map{
+            "bansos_registration_id": bansosRegistration.ID,
+            "user_id": bansosRegistration.UserID,
+            "bansos_id": bansosRegistration.BansosID,
+            "status": bansosRegistration.Status,
+        },
+    })
+}
+
+func (h *BansosRegistrationHandler) RejectBansosRegisHandler(c echo.Context) error {
+    _, ok := c.Get("token").(jwt.MapClaims)
+    if !ok {
+        return c.JSON(http.StatusUnauthorized, echo.Map{
+            "code":    http.StatusUnauthorized,
+            "status":  "error",
+            "message": "Unauthorized",
+        })
+    }
+    
+    var request struct {
+        BansosRegistrationID int `json:"bansos_registration_id" form:"bansos_registration_id"`
+    }
+
+    if err := c.Bind(&request); err != nil {
+        return c.JSON(http.StatusBadRequest, echo.Map{
+            "code":    http.StatusBadRequest,
+            "status":  "error",
+            "message": "Invalid request payload",
+        })
+    }
+
+    bansosRegistration, err := h.bansosRegistrationRepository.GetBansosRegisByID(int(request.BansosRegistrationID))
+    if err != nil {
+        return c.JSON(http.StatusInternalServerError, echo.Map{
+            "code":    http.StatusInternalServerError,
+            "status":  "error",
+            "message": "Registration Not Found",
+        })
+    }
+
+    if err := h.bansosRegistrationRepository.RejectBansosRegis(bansosRegistration); err != nil {
+        return c.JSON(http.StatusInternalServerError, echo.Map{
+            "code":    http.StatusInternalServerError,
+            "status":  "error",
+            "message": "Failed to reject registration",
+        })
+    }
+    // Success
+    return c.JSON(http.StatusOK, echo.Map{
+        "code":    http.StatusOK,
+        "status":  "success",
+        "message": "Registration rejected successfully",
+        "data": echo.Map{
+            "bansos_registration_id": bansosRegistration.ID,
+            "user_id": bansosRegistration.UserID,
+            "bansos_id": bansosRegistration.BansosID,
+            "status": bansosRegistration.Status,
         },
     })
 }

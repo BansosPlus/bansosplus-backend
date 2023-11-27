@@ -77,16 +77,17 @@ func main() {
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
 	}))
 
-
 	// Repository
 	authRepository := repository.NewAuthRepository(gormDB)
 	userRepository := repository.NewUserRepository(gormDB)
 	feedbackRepository := repository.NewFeedbackRepository(gormDB)
+	bansosRegistrationRepository := repository.NewBansosRegistrationRepository(gormDB)
 
 	// Handler
 	authHandler := handler.NewAuthHandler(authRepository)
 	userHandler := handler.NewUserHandler(userRepository)
 	feedbackHandler := handler.NewFeedbackHandler(feedbackRepository)
+	bansosRegistrationHandler := handler.NewBansosRegistrationHandler(bansosRegistrationRepository)
 	
 	// Router
 	api := e.Group("/api")
@@ -97,12 +98,18 @@ func main() {
 	apiAuth := api.Group("/", authMiddleware)
 	// NOTE: This route is an example middleware route
 	apiAuth.GET("users", userHandler.GetUserHandler)
+	
 	// feedback
 	apiAuth.POST("feedbacks", feedbackHandler.AddFeedbackHandler)
 	apiAuth.PUT("feedbacks", feedbackHandler.UpdateFeedbackHandler)
 	apiAuth.DELETE("feedbacks", feedbackHandler.DeleteFeedbackHandler)
 	apiAuth.GET("users/feedbacks", feedbackHandler.GetFeedbackByUserIDHandler)
 	apiAuth.GET("bansos/feedbacks", feedbackHandler.GetFeedbackByBansosIDHandler)
+
+	// bansos registration
+	apiAuth.POST("bansos-registration", bansosRegistrationHandler.RegisterBansosHandler)
+	apiAuth.PUT("bansos-registration/accept", bansosRegistrationHandler.AcceptBansosRegisHandler)
+	apiAuth.PUT("bansos-registration/reject", bansosRegistrationHandler.RejectBansosRegisHandler)
 
 	e.Logger.Fatal(e.Start(":" + configuration.Http.HttpPort))
 }
