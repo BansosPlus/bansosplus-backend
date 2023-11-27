@@ -181,7 +181,6 @@ func (h *FeedbackHandler) UpdateFeedbackHandler(c echo.Context) error {
         })
     }
 
-    // Assuming you have a method in your repository to update feedback
     if err := h.feedbackRepository.UpdateFeedback(&feedback); err != nil {
         return c.JSON(http.StatusInternalServerError, echo.Map{
             "code":    http.StatusInternalServerError,
@@ -238,7 +237,6 @@ func (h *FeedbackHandler) DeleteFeedbackHandler(c echo.Context) error {
     }
 
     feedback, _ := h.feedbackRepository.GetFeedbackByID(int(request.ID))
-    // Assuming you have a method in your repository to delete feedback
     if int(userID) != feedback.UserID {
         return c.JSON(http.StatusForbidden, echo.Map{
             "code":    http.StatusForbidden,

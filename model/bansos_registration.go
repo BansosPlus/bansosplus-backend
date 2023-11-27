@@ -17,7 +17,7 @@ type BansosRegistration struct {
     UserID      int          	`json:"user_id"        	gorm:"not null"     sql:"type:int REFERENCES users(id)"`
     Name        string          `json:"name"            gorm:"size:255;null"`
     Nik         string          `json:"nik"             gorm:"size:255;null"`
-    NoKK        string          `json:"nokk"            gorm:"size:255;null"`
+    NoKK        string          `json:"nokk"            gorm:"size:255;not null;unique"`
     Status      StatusEnum      `json:"status"          gorm:"type:enum('ON_PROGRESS','ACCEPTED','REJECTED');not null;default:'ON_PROGRESS'"`
     ApprovalAt 	time.Time       `json:"approval_at"  	gorm:"type:datetime;null"`
     CreatedAt 	time.Time       `json:"created_at"  	gorm:"type:datetime;autoCreateTime"`
