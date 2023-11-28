@@ -82,12 +82,14 @@ func main() {
 	userRepository := repository.NewUserRepository(gormDB)
 	feedbackRepository := repository.NewFeedbackRepository(gormDB)
 	bansosRegistrationRepository := repository.NewBansosRegistrationRepository(gormDB)
+	bansosRepository := repository.NewBansosRepository(gormDB)
 
 	// Handler
 	authHandler := handler.NewAuthHandler(authRepository)
 	userHandler := handler.NewUserHandler(userRepository)
 	feedbackHandler := handler.NewFeedbackHandler(feedbackRepository)
 	bansosRegistrationHandler := handler.NewBansosRegistrationHandler(bansosRegistrationRepository)
+	bansosHandler := handler.NewBansosHandler(bansosRepository, configuration.Storage.BucketName, configuration.Storage.Credentials)
 	
 	// Router
 	api := e.Group("/api")
@@ -99,6 +101,14 @@ func main() {
 	// NOTE: This route is an example middleware route
 	apiAuth.GET("users", userHandler.GetUserHandler)
 	
+
+	// Bansos
+	apiAuth.POST("bansos", bansosHandler.AddBansosHandler)
+	apiAuth.GET("bansos", bansosHandler.GetBansosHandler)
+	apiAuth.GET("bansos/:id", bansosHandler.GetBansosByIDHandler)
+	apiAuth.PUT("bansos/:id", bansosHandler.UpdateBansosHandler)
+	apiAuth.DELETE("bansos/:id", bansosHandler.DeleteBansosHandler)
+
 	// feedback
 	apiAuth.POST("feedbacks", feedbackHandler.AddFeedbackHandler)
 	apiAuth.PUT("feedbacks", feedbackHandler.UpdateFeedbackHandler)

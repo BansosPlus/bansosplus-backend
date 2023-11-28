@@ -22,10 +22,16 @@ type tsDatabase struct {
 	DatabaseName string `json:"database_name"`
 }
 
+type tsStorage struct {
+	BucketName  string `json:"bucket_name"`
+	Credentials string `json:"credentials"`
+}
+
 type Configuration struct {
 	Http     tsHttp     `json:"http"`
 	Database tsDatabase `json:"database"`
-	AppPath  string `json:"app_path"`
+	AppPath	 string     `json:"app_path"`
+	Storage  tsStorage  `json:"storage"`
 }
 
 var Reset = "\033[0m"
