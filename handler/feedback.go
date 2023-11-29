@@ -145,6 +145,7 @@ func (h *FeedbackHandler) GetFeedbackByBansosIDHandler(c echo.Context) error {
 
 func (h *FeedbackHandler) UpdateFeedbackHandler(c echo.Context) error {
     var feedback model.Feedback
+    var exist_feedback *model.Feedback
 
     // Bind payload
     if err := c.Bind(&feedback); err != nil || feedback.ID == 0 || feedback.Score == 0  {
@@ -173,7 +174,16 @@ func (h *FeedbackHandler) UpdateFeedbackHandler(c echo.Context) error {
         })
     }
 
-    if int(userID) != feedback.UserID {
+   exist_feedback, _ = h.feedbackRepository.GetFeedbackByID(int(feedback.ID))
+	if exist_feedback == nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"code":    http.StatusInternalServerError,
+			"status":  "error",
+			"message": "Failed to fetch feedback",
+		})
+	}
+
+    if int(userID) != int(exist_feedback.UserID) {
         return c.JSON(http.StatusForbidden, echo.Map{
             "code":    http.StatusForbidden,
             "status":  "error",
