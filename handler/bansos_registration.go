@@ -260,7 +260,7 @@ func (h *BansosRegistrationHandler) GetBansosRegisByUserIDHandler(c echo.Context
         })
     }
 
-    bansosRegistration, err := h.bansosRegistrationRepository.GetBansosRegisByUserID(int(userID))
+    bansosRegistrations, err := h.bansosRegistrationRepository.GetBansosRegisByUserID(int(userID))
     if err != nil {
         return c.JSON(http.StatusInternalServerError, echo.Map{
             "code":    http.StatusInternalServerError,
@@ -273,7 +273,7 @@ func (h *BansosRegistrationHandler) GetBansosRegisByUserIDHandler(c echo.Context
         "code": http.StatusOK,
         "status": "success",
         "message": "Bansos registration retrieved successfully",
-        "data": bansosRegistration
+        "data": bansosRegistrations
     })
 }
 
