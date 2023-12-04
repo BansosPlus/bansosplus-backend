@@ -40,11 +40,14 @@ func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByID(id int) (*model.Ba
 }
 
 func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByUserID(id int) (*model.BansosRegistration, error) {
-	var bansosRegistration model.BansosRegistration
-	if err := r.db.Table("bansos_registrations").Where("user_id = ?", id).First(&bansosRegistration).Error; err != nil {
-		return nil, err
-	}
-	return &bansosRegistration, nil
+    var bansosRegistration model.BansosRegistration
+    if err := r.db.Table("bansos_registrations").
+        Joins("JOIN bansos ON bansos_registrations.bansos_id = bansos.id").
+        Where("bansos_registrations.user_id = ?", id).
+        First(&bansosRegistration).Error; err != nil {
+        return nil, err
+    }
+    return &bansosRegistration, nil
 }
 
 func (r *BansosRegistrationRepositoryImpl) AcceptBansosRegis(bansosRegistration *model.BansosRegistration) error {    

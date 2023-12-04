@@ -241,7 +241,6 @@ func (h *BansosRegistrationHandler) GetOnProgressBansosRegisHandler(c echo.Conte
 }
 
 func (h *BansosRegistrationHandler) GetBansosRegisByUserIDHandler(c echo.Context) error {
-    var bansosRegistration *model.BansosRegistration
 
     token, ok := c.Get("token").(jwt.MapClaims)
     if !ok {
@@ -274,12 +273,7 @@ func (h *BansosRegistrationHandler) GetBansosRegisByUserIDHandler(c echo.Context
         "code": http.StatusOK,
         "status": "success",
         "message": "Bansos registration retrieved successfully",
-        "data": echo.Map{
-            "id": bansosRegistration.ID,
-            "user_id": bansosRegistration.UserID,
-            "bansos_id": bansosRegistration.BansosID,
-            "status": bansosRegistration.Status,
-        },
+        "data": bansosRegistration
     })
 }
 
