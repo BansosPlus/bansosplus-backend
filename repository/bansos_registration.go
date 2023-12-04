@@ -14,6 +14,7 @@ type BansosRegistrationRepository interface {
     GetBansosRegisByID(id int) (*model.BansosRegistration, error)
     GetBansosRegisByStatus(status string) ([]*model.BansosRegistration, error)
     GetBansosRegisByUserID(id int) (*model.BansosRegistration, error)
+    GetBansosRegisByBansosID(id int) ([]*model.BansosRegistration, error)
 }
 
 type BansosRegistrationRepositoryImpl struct {
@@ -63,6 +64,14 @@ func (r *BansosRegistrationRepositoryImpl) RejectBansosRegis(bansosRegistration 
 func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByStatus(status string) ([]*model.BansosRegistration, error) {
     var bansosRegistrations []*model.BansosRegistration
 	if err := r.db.Table("bansos_registrations").Where("status = ?", status).Find(&bansosRegistrations).Error; err != nil {
+		return nil, err
+	}
+	return bansosRegistrations, nil
+}
+
+func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByBansosID(id int) ([]*model.BansosRegistration, error) {
+    var bansosRegistrations []*model.BansosRegistration
+	if err := r.db.Table("bansos_registrations").Where("bansos_id = ?", status).Find(&bansosRegistrations).Error; err != nil {
 		return nil, err
 	}
 	return bansosRegistrations, nil
