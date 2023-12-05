@@ -74,7 +74,7 @@ func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByStatus(status string)
 
 func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByBansosID(id int) ([]*model.BansosRegistration, error) {
     var bansosRegistrations []*model.BansosRegistration
-	if err := r.db.Table("bansos_registrations").Where("bansos_id = ?", status).Find(&bansosRegistrations).Error; err != nil {
+	if err := r.db.Table("bansos_registrations").Where("bansos_id = ?", id).Find(&bansosRegistrations).Error; err != nil {
 		return nil, err
 	}
 	return bansosRegistrations, nil
