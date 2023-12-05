@@ -7,13 +7,18 @@ import (
     "github.com/BansosPlus/bansosplus-backend.git/model"
 )
 
+type BansosRegistrationWithBansos struct {
+    model.BansosRegistration
+    Bansos model.Bansos `gorm:"column:bansos_id;embedded"`
+}
+
 type BansosRegistrationRepository interface {
     RegisterBansos(bansosRegistration *model.BansosRegistration) error
     AcceptBansosRegis(bansosRegistration *model.BansosRegistration) error
     RejectBansosRegis(bansosRegistration *model.BansosRegistration) error
     GetBansosRegisByID(id int) (*model.BansosRegistration, error)
     GetBansosRegisByStatus(status string) ([]*model.BansosRegistration, error)
-    GetBansosRegisByUserID(id int) ([]*model.BansosRegistration, error)
+    GetBansosRegisByUserID(id int) ([]*BansosRegistrationWithBansos, error)
     GetBansosRegisByBansosID(id int) ([]*model.BansosRegistration, error)
 }
 
@@ -39,15 +44,28 @@ func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByID(id int) (*model.Ba
 	return &bansosRegistration, nil
 }
 
-func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByUserID(id int) ([]*model.BansosRegistration, error) {
-    var bansosRegistrations []*model.BansosRegistration
-    if err := r.db.Table("bansos_registrations").
+func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByUserID(id int) ([]*BansosRegistrationWithBansos, error) {
+    var result []*BansosRegistrationWithBansos
+    rows, err := r.db.Table("bansos_registrations").
+        Select("bansos_registrations.*, bansos.*").
         Joins("JOIN bansos ON bansos_registrations.bansos_id = bansos.id").
         Where("bansos_registrations.user_id = ?", id).
-        Find(&bansosRegistrations).Error; err != nil {
+        Rows()
+
+    if err != nil {
         return nil, err
     }
-    return bansosRegistrations, nil
+    defer rows.Close()
+
+    for rows.Next() {
+        var item BansosRegistrationWithBansos
+        if err := r.db.ScanRows(rows, &item); err != nil {
+            return nil, err
+        }
+        result = append(result, &item)
+    }
+
+    return result, nil
 }
 
 func (r *BansosRegistrationRepositoryImpl) AcceptBansosRegis(bansosRegistration *model.BansosRegistration) error {    
