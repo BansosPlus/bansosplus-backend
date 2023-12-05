@@ -273,7 +273,7 @@ func (h *BansosRegistrationHandler) GetBansosRegisByUserIDHandler(c echo.Context
         "code": http.StatusOK,
         "status": "success",
         "message": "Bansos registration retrieved successfully",
-        "data": bansosRegistrations
+        "data": bansosRegistrations,
     })
 }
 
