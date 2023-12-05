@@ -11,6 +11,8 @@ import (
 )
 
 type tsHttp struct {
+	Protocol string `json:"protocol"`
+	Host 	 string `json:"host"`
 	HttpPort string `json:"http_port"`
 }
 

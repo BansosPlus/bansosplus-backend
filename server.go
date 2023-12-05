@@ -83,6 +83,7 @@ func main() {
 	feedbackRepository := repository.NewFeedbackRepository(gormDB)
 	bansosRegistrationRepository := repository.NewBansosRegistrationRepository(gormDB)
 	bansosRepository := repository.NewBansosRepository(gormDB)
+	qrCodeRepository := repository.NewQRCodeRepository(gormDB)
 
 	// Handler
 	authHandler := handler.NewAuthHandler(authRepository)
@@ -90,11 +91,13 @@ func main() {
 	feedbackHandler := handler.NewFeedbackHandler(feedbackRepository)
 	bansosRegistrationHandler := handler.NewBansosRegistrationHandler(bansosRegistrationRepository)
 	bansosHandler := handler.NewBansosHandler(bansosRepository, configuration.Storage.BucketName, configuration.Storage.Credentials)
+	qrCodeHandler := handler.NewQRCodeHandler(qrCodeRepository, configuration.Http.Protocol, configuration.Http.Host, configuration.Http.HttpPort)
 	
 	// Router
 	api := e.Group("/api")
 	api.POST("/register", authHandler.Register)
 	api.POST("/login", authHandler.Login)
+	api.GET("/qr-codes/:uuid", qrCodeHandler.GetQRCodeByUUIDHandler)
 
 	// Middleware Router
 	apiAuth := api.Group("/", authMiddleware)
@@ -123,6 +126,10 @@ func main() {
 	apiAuth.GET("bansos-registration/on-progress", bansosRegistrationHandler.GetOnProgressBansosRegisHandler)
 	apiAuth.PUT("bansos-registration/accept", bansosRegistrationHandler.AcceptBansosRegisHandler)
 	apiAuth.PUT("bansos-registration/reject", bansosRegistrationHandler.RejectBansosRegisHandler)
+
+	// QR Code
+	apiAuth.POST("qr-codes", qrCodeHandler.CreateQRCodeHandler)
+	apiAuth.GET("qr-codes/show/:id", qrCodeHandler.ShowQRCodeByIDHandler)
 
 	e.Logger.Fatal(e.Start(":" + configuration.Http.HttpPort))
 }
