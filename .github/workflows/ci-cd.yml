@@ -40,6 +40,6 @@ jobs:
           cd bansosplus-backend
           git pull --ff-only
           sudo docker rm -f $(sudo docker ps -q -f "expose=8001")
-          sudo docker rmi bansosplus
+          sudo docker rmi -f bansosplus
           sudo docker build -t bansosplus .
           sudo docker run -d -p 8001:8001 bansosplus
