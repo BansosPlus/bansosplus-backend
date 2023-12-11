@@ -57,6 +57,7 @@ func (h *UserHandler) GetUserHandler(c echo.Context) error {
 		"code": http.StatusOK,
 		"status": "success",
 		"data": echo.Map{
+			"id": user.ID,
 			"name": user.Name,
 			"email": user.Email,
 			"phone": user.Phone,
