@@ -41,3 +41,4 @@ jobs:
           git pull --ff-only
           kill $(lsof -t -i:8001)
           nohup go run server.go > server.log 2>&1 &
+        shell: bash
