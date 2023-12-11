@@ -8,8 +8,14 @@ import (
 )
 
 type BansosRegistrationWithBansos struct {
-    model.BansosRegistration
-    Bansos model.Bansos `gorm:"column:bansos_id;embedded"`
+    ID                  uint   `json:"id"`
+    UserID              uint   `json:"user_id"`
+    UserName            string `json:"user_name"`
+    BansosID            uint   `json:"bansos_id"`
+    BansosExpiryDate    string `json:"expiry_date"`
+    Status              string `json:"status"`
+    CreatedAt           string `json:"created_at"`
+    UpdatedAt           string `json:"updated_at"`
 }
 
 type BansosRegistrationRepository interface {
@@ -47,8 +53,9 @@ func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByID(id int) (*model.Ba
 func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByUserID(id int) ([]*BansosRegistrationWithBansos, error) {
     var result []*BansosRegistrationWithBansos
     rows, err := r.db.Table("bansos_registrations").
-        Select("bansos_registrations.*, bansos.*").
+        Select("bansos_registrations.id, bansos_registrations.user_id, users.name as user_name, bansos_registrations.bansos_id, bansos.expiry_date, bansos_registrations.status, bansos_registrations.created_at, bansos_registrations.updated_at").
         Joins("JOIN bansos ON bansos_registrations.bansos_id = bansos.id").
+        Joins("JOIN users ON bansos_registrations.user_id = users.id").
         Where("bansos_registrations.user_id = ?", id).
         Rows()
 
@@ -59,7 +66,7 @@ func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByUserID(id int) ([]*Ba
 
     for rows.Next() {
         var item BansosRegistrationWithBansos
-        if err := r.db.ScanRows(rows, &item); err != nil {
+        if err := rows.Scan(&item.ID, &item.UserID, &item.UserName, &item.BansosID, &item.BansosExpiryDate, &item.Status, &item.CreatedAt, &item.UpdatedAt); err != nil {
             return nil, err
         }
         result = append(result, &item)

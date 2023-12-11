@@ -1,6 +1,7 @@
 package handler
 
 import (
+    "strconv"
     "net/http"
     "github.com/labstack/echo"
     "github.com/dgrijalva/jwt-go"
@@ -101,19 +102,18 @@ func (h *BansosRegistrationHandler) AcceptBansosRegisHandler(c echo.Context) err
         })
     }
     
-    var request struct {
-        BansosRegistrationID int `json:"bansos_registration_id" form:"bansos_registration_id"`
-    }
+    bansosRegisIDStr := c.QueryParam("bansos_registration_id")
 
-    if err := c.Bind(&request); err != nil {
+    bansosRegisID, err := strconv.Atoi(bansosRegisIDStr)
+    if err != nil {
         return c.JSON(http.StatusBadRequest, echo.Map{
             "code":    http.StatusBadRequest,
             "status":  "error",
-            "message": "Invalid request payload",
+            "message": "Invalid bansos_id parameter",
         })
     }
 
-    bansosRegistration, err := h.bansosRegistrationRepository.GetBansosRegisByID(int(request.BansosRegistrationID))
+    bansosRegistration, err := h.bansosRegistrationRepository.GetBansosRegisByID(bansosRegisID)
     if err != nil {
         return c.JSON(http.StatusInternalServerError, echo.Map{
             "code":    http.StatusInternalServerError,
@@ -153,19 +153,18 @@ func (h *BansosRegistrationHandler) RejectBansosRegisHandler(c echo.Context) err
         })
     }
     
-    var request struct {
-        BansosRegistrationID int `json:"bansos_registration_id" form:"bansos_registration_id"`
-    }
+    bansosRegisIDStr := c.QueryParam("bansos_registration_id")
 
-    if err := c.Bind(&request); err != nil {
+    bansosRegisID, err := strconv.Atoi(bansosRegisIDStr)
+    if err != nil {
         return c.JSON(http.StatusBadRequest, echo.Map{
             "code":    http.StatusBadRequest,
             "status":  "error",
-            "message": "Invalid request payload",
+            "message": "Invalid bansos_id parameter",
         })
     }
 
-    bansosRegistration, err := h.bansosRegistrationRepository.GetBansosRegisByID(int(request.BansosRegistrationID))
+    bansosRegistration, err := h.bansosRegistrationRepository.GetBansosRegisByID(bansosRegisID)
     if err != nil {
         return c.JSON(http.StatusInternalServerError, echo.Map{
             "code":    http.StatusInternalServerError,
@@ -279,8 +278,15 @@ func (h *BansosRegistrationHandler) GetBansosRegisByUserIDHandler(c echo.Context
 
 func (h *BansosRegistrationHandler) GetBansosRegisByBansosIDHandler(c echo.Context) error {
 
-    var request struct {
-        BansosID int `json:"bansos_id" form:"bansos_id"`
+    bansosIDStr := c.QueryParam("bansos_id")
+
+    bansosID, err := strconv.Atoi(bansosIDStr)
+    if err != nil {
+        return c.JSON(http.StatusBadRequest, echo.Map{
+            "code":    http.StatusBadRequest,
+            "status":  "error",
+            "message": "Invalid bansos_id parameter",
+        })
     }
 
     token, ok := c.Get("token").(jwt.MapClaims)
@@ -302,7 +308,7 @@ func (h *BansosRegistrationHandler) GetBansosRegisByBansosIDHandler(c echo.Conte
     }
 
     if userRole == "admin" {
-        bansosRegistrations, err := h.bansosRegistrationRepository.GetBansosRegisByBansosID(int(request.BansosID))
+        bansosRegistrations, err := h.bansosRegistrationRepository.GetBansosRegisByBansosID(bansosID)
         if err != nil {
             return c.JSON(http.StatusInternalServerError, echo.Map{
                 "code":    http.StatusInternalServerError,
@@ -324,5 +330,45 @@ func (h *BansosRegistrationHandler) GetBansosRegisByBansosIDHandler(c echo.Conte
         "code":    http.StatusUnauthorized,
         "status":  "error",
         "message": "Unauthorized",
+    })
+}
+
+func (h *BansosRegistrationHandler) GetBansosRegisByIDHandler(c echo.Context) error {
+
+    bansosRegisIDStr := c.QueryParam("bansos_registration_id")
+
+    bansosRegisID, err := strconv.Atoi(bansosRegisIDStr)
+    if err != nil {
+        return c.JSON(http.StatusBadRequest, echo.Map{
+            "code":    http.StatusBadRequest,
+            "status":  "error",
+            "message": "Invalid bansos_id parameter",
+        })
+    }
+
+    _, ok := c.Get("token").(jwt.MapClaims)
+    if !ok {
+        return c.JSON(http.StatusUnauthorized, echo.Map{
+            "code":    http.StatusUnauthorized,
+            "status":  "error",
+            "message": "Unauthorized",
+        })
+    }
+
+    bansosRegistrations, err := h.bansosRegistrationRepository.GetBansosRegisByID(bansosRegisID)
+    if err != nil {
+        return c.JSON(http.StatusInternalServerError, echo.Map{
+            "code":    http.StatusInternalServerError,
+            "status":  "error",
+            "message": "Failed to retrieve bansos registrations",
+        })
+    }
+    
+    // Success
+    return c.JSON(http.StatusOK, echo.Map{
+        "code": http.StatusOK,
+        "status": "success",
+        "message": "Bansos registrations retrieved successfully",
+        "data": bansosRegistrations,
     })
 }
