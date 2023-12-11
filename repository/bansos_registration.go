@@ -9,15 +9,13 @@ import (
 )
 
 type BansosRegistrationWithBansos struct {
-	ID               uint   `json:"id"`
-	UserID           uint   `json:"user_id"`
-	UserName         string `json:"user_name"`
-	BansosID         uint   `json:"bansos_id"`
-	BansosName       string `json:"bansos_name"`
-	BansosExpiryDate string `json:"expiry_date"`
-	Status           string `json:"status"`
-	CreatedAt        string `json:"created_at"`
-	UpdatedAt        string `json:"updated_at"`
+	ID         uint   `json:"id"`
+	BansosName string `json:"bansos_name"`
+	BansosType string `json:"type"`
+	Status     string `json:"status"`
+	ImageUrl   string `json:"image_url"`
+	CreatedAt  string `json:"created_at"`
+	UpdatedAt  string `json:"updated_at"`
 }
 
 type BansosRegistrationRepository interface {
@@ -55,7 +53,7 @@ func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByID(id int) (*model.Ba
 func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByUserID(id int) ([]*BansosRegistrationWithBansos, error) {
 	var result []*BansosRegistrationWithBansos
 	rows, err := r.db.Table("bansos_registrations").
-		Select("bansos_registrations.id, bansos_registrations.user_id, users.name as user_name, bansos_registrations.bansos_id, bansos.name as bansos_name, bansos.expiry_date, bansos_registrations.status, bansos_registrations.created_at, bansos_registrations.updated_at").
+		Select("bansos_registrations.id, bansos.name as bansos_name, bansos.type, bansos_registrations.status, bansos.image_url, bansos_registrations.created_at, bansos_registrations.updated_at").
 		Joins("JOIN bansos ON bansos_registrations.bansos_id = bansos.id").
 		Joins("JOIN users ON bansos_registrations.user_id = users.id").
 		Where("bansos_registrations.user_id = ?", id).
@@ -68,7 +66,7 @@ func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByUserID(id int) ([]*Ba
 
 	for rows.Next() {
 		var item BansosRegistrationWithBansos
-		if err := rows.Scan(&item.ID, &item.UserID, &item.UserName, &item.BansosID, &item.BansosName, &item.BansosExpiryDate, &item.Status, &item.CreatedAt, &item.UpdatedAt); err != nil {
+		if err := rows.Scan(&item.ID, &item.BansosName, &item.BansosType, &item.Status, &item.ImageUrl, &item.CreatedAt, &item.UpdatedAt); err != nil {
 			return nil, err
 		}
 		result = append(result, &item)
