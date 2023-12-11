@@ -39,5 +39,6 @@ jobs:
         script: |
           cd bansosplus-backend
           git pull --ff-only
-          sudo kill $(lsof -t -i:8001)
-          nohup go run server.go > server.log 2>&1 &
+          docker rm -f $(docker ps -q -f "expose=8001")
+          docker build -t bansosplus .
+          docker run -d -p 8001:8001 bansosplus
