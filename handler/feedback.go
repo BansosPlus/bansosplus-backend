@@ -1,6 +1,7 @@
 package handler
 
 import (
+    "strconv"
     "net/http"
     "github.com/labstack/echo"
     "github.com/dgrijalva/jwt-go"
@@ -114,19 +115,18 @@ func (h *FeedbackHandler) GetFeedbackByUserIDHandler(c echo.Context) error {
 
 func (h *FeedbackHandler) GetFeedbackByBansosIDHandler(c echo.Context) error {
     // Bind payload
-    var request struct {
-        BansosID int `json:"bansos_id" form:"bansos_id"`
-    }
+    bansosIDStr := c.QueryParam("bansos_id")
 
-    if err := c.Bind(&request); err != nil {
+    bansosID, err := strconv.Atoi(bansosIDStr)
+    if err != nil {
         return c.JSON(http.StatusBadRequest, echo.Map{
             "code":    http.StatusBadRequest,
             "status":  "error",
-            "message": "Invalid request payload",
+            "message": "Invalid bansos_id parameter",
         })
     }
 
-    feedbacks, err := h.feedbackRepository.GetFeedbackByBansosID(int(request.BansosID))
+    feedbacks, err := h.feedbackRepository.GetFeedbackByBansosID(bansosID)
     if err != nil {
         return c.JSON(http.StatusInternalServerError, echo.Map{
             "code":    http.StatusInternalServerError,
