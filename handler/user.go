@@ -63,6 +63,7 @@ func (h *UserHandler) GetUserHandler(c echo.Context) error {
 			"role": user.Role,
 			"nik": user.Nik,
 			"no_kk": user.NoKK,
+			"income": user.Income,
 		},
 	})
 }
