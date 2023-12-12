@@ -24,7 +24,7 @@ type BansosRegistrationRepository interface {
 	RejectBansosRegis(bansosRegistration *model.BansosRegistration) error
 	GetBansosRegisByID(id int) (*model.BansosRegistration, error)
 	GetBansosRegisByStatus(status string) ([]*model.BansosRegistration, error)
-	GetBansosRegisByUserID(id int) ([]*BansosRegistrationWithBansos, error)
+	GetBansosRegisByUserID(id int, statuses []string) ([]*BansosRegistrationWithBansos, error)
 	GetBansosRegisByBansosID(id int) ([]*model.BansosRegistration, error)
 }
 
@@ -50,15 +50,15 @@ func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByID(id int) (*model.Ba
 	return &bansosRegistration, nil
 }
 
-func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByUserID(id int) ([]*BansosRegistrationWithBansos, error) {
+func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByUserID(id int, statuses []string) ([]*BansosRegistrationWithBansos, error) {
 	var result []*BansosRegistrationWithBansos
 	rows, err := r.db.Table("bansos_registrations").
 		Select("bansos_registrations.id, bansos.name as bansos_name, bansos.type, bansos_registrations.status, bansos.image_url, bansos_registrations.created_at, bansos_registrations.updated_at").
 		Joins("JOIN bansos ON bansos_registrations.bansos_id = bansos.id").
 		Joins("JOIN users ON bansos_registrations.user_id = users.id").
 		Where("bansos_registrations.user_id = ?", id).
+		Where("bansos_registrations.status IN (?)", statuses).
 		Rows()
-
 	if err != nil {
 		return nil, err
 	}
