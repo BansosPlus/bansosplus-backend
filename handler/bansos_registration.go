@@ -196,6 +196,57 @@ func (h *BansosRegistrationHandler) RejectBansosRegisHandler(c echo.Context) err
 	})
 }
 
+func (h *BansosRegistrationHandler) ValidateBansosRegisHandler(c echo.Context) error {
+	_, ok := c.Get("token").(jwt.MapClaims)
+	if !ok {
+		return c.JSON(http.StatusUnauthorized, echo.Map{
+			"code":    http.StatusUnauthorized,
+			"status":  "error",
+			"message": "Unauthorized",
+		})
+	}
+
+	bansosRegisIDStr := c.QueryParam("bansos_registration_id")
+
+	bansosRegisID, err := strconv.Atoi(bansosRegisIDStr)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"code":    http.StatusBadRequest,
+			"status":  "error",
+			"message": "Invalid bansos_id parameter",
+		})
+	}
+
+	bansosRegistration, err := h.bansosRegistrationRepository.GetBansosRegisByID(bansosRegisID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"code":    http.StatusInternalServerError,
+			"status":  "error",
+			"message": "Registration Not Found",
+		})
+	}
+
+	if err := h.bansosRegistrationRepository.ValidateBansosRegis(bansosRegistration); err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"code":    http.StatusInternalServerError,
+			"status":  "error",
+			"message": "Failed to validate registration",
+		})
+	}
+	// Success
+	return c.JSON(http.StatusOK, echo.Map{
+		"code":    http.StatusOK,
+		"status":  "success",
+		"message": "Registration rejected successfully",
+		"data": echo.Map{
+			"bansos_registration_id": bansosRegistration.ID,
+			"user_id":                bansosRegistration.UserID,
+			"bansos_id":              bansosRegistration.BansosID,
+			"status":                 "TAKEN",
+		},
+	})
+}
+
 func (h *BansosRegistrationHandler) GetOnProgressBansosRegisHandler(c echo.Context) error {
 	token, ok := c.Get("token").(jwt.MapClaims)
 	if !ok {

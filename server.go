@@ -1,10 +1,11 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	log "github.com/sirupsen/logrus"
-	"net/http"
 
 	"github.com/BansosPlus/bansosplus-backend.git/database"
 	"github.com/BansosPlus/bansosplus-backend.git/handler"
@@ -92,7 +93,7 @@ func main() {
 	bansosRegistrationHandler := handler.NewBansosRegistrationHandler(bansosRegistrationRepository)
 	bansosHandler := handler.NewBansosHandler(bansosRepository, configuration.Storage.BucketName, configuration.Storage.Credentials)
 	qrCodeHandler := handler.NewQRCodeHandler(qrCodeRepository, configuration.Http.Protocol, configuration.Http.Host, configuration.Http.HttpPort)
-	
+
 	// Router
 	api := e.Group("/api")
 	api.POST("/register", authHandler.Register)
@@ -103,7 +104,6 @@ func main() {
 	apiAuth := api.Group("/", authMiddleware)
 	// NOTE: This route is an example middleware route
 	apiAuth.GET("users", userHandler.GetUserHandler)
-	
 
 	// Bansos
 	apiAuth.POST("bansos", bansosHandler.AddBansosHandler)
@@ -127,6 +127,7 @@ func main() {
 	apiAuth.GET("bansos-registration/on-progress", bansosRegistrationHandler.GetOnProgressBansosRegisHandler)
 	apiAuth.PUT("bansos-registration/accept", bansosRegistrationHandler.AcceptBansosRegisHandler)
 	apiAuth.PUT("bansos-registration/reject", bansosRegistrationHandler.RejectBansosRegisHandler)
+	apiAuth.PUT("bansos-registration/validate", bansosRegistrationHandler.ValidateBansosRegisHandler)
 
 	// QR Code
 	apiAuth.POST("qr-codes", qrCodeHandler.CreateQRCodeHandler)

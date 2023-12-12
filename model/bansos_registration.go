@@ -20,7 +20,7 @@ type BansosRegistration struct {
 	Name       string     `json:"name"            gorm:"size:255;null"`
 	Nik        string     `json:"nik"             gorm:"size:255;null"`
 	NoKK       string     `json:"nokk"            gorm:"size:255;not null"`
-	Status     StatusEnum `json:"status"          gorm:"type:enum('ON_PROGRESS','ACCEPTED','REJECTED','TOKEN');not null;default:'ON_PROGRESS'"`
+	Status     StatusEnum `json:"status"          gorm:"type:enum('ON_PROGRESS','ACCEPTED','REJECTED','TAKEN');not null;default:'ON_PROGRESS'"`
 	ApprovalAt time.Time  `json:"approval_at"     gorm:"type:datetime;autoCreateTime"`
 	CreatedAt  time.Time  `json:"created_at"      gorm:"type:datetime;autoCreateTime"`
 	UpdatedAt  time.Time  `json:"updated_at"      gorm:"type:datetime;autoUpdateTime"`

@@ -22,6 +22,7 @@ type BansosRegistrationRepository interface {
 	RegisterBansos(bansosRegistration *model.BansosRegistration) error
 	AcceptBansosRegis(bansosRegistration *model.BansosRegistration) error
 	RejectBansosRegis(bansosRegistration *model.BansosRegistration) error
+	ValidateBansosRegis(bansosRegistration *model.BansosRegistration) error
 	GetBansosRegisByID(id int) (*model.BansosRegistration, error)
 	GetBansosRegisByStatus(status string) ([]*model.BansosRegistration, error)
 	GetBansosRegisByUserID(id int, statuses []string) ([]*BansosRegistrationWithBansos, error)
@@ -86,6 +87,13 @@ func (r *BansosRegistrationRepositoryImpl) RejectBansosRegis(bansosRegistration 
 	return r.db.Model(&model.BansosRegistration{}).
 		Where("id = ?", bansosRegistration.ID).
 		Updates(map[string]interface{}{"status": "REJECTED", "approval_at": time.Now()}).
+		Error
+}
+
+func (r *BansosRegistrationRepositoryImpl) ValidateBansosRegis(bansosRegistration *model.BansosRegistration) error {
+	return r.db.Model(&model.BansosRegistration{}).
+		Where("id = ?", bansosRegistration.ID).
+		Updates(map[string]interface{}{"status": "TAKEN", "approval_at": time.Now()}).
 		Error
 }
 
