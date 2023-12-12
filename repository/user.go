@@ -8,6 +8,7 @@ import (
 
 type UserRepository interface {
 	GetUserByID(id int) (*model.User, error)
+	UpdateUser(user *model.User) error
 }
 
 type UserRepositoryImpl struct {
@@ -26,4 +27,10 @@ func (r *UserRepositoryImpl) GetUserByID(id int) (*model.User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (r *UserRepositoryImpl) UpdateUser(user *model.User) error {
+    
+	return r.db.Model(&model.User{}).Where("id = ?", user.ID).Updates(user).Error
+
 }

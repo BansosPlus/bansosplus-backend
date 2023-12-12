@@ -23,6 +23,7 @@ type User struct {
     Phone     string            `json:"phone"       gorm:"size:255;not null;unique"`
     Password  string            `json:"password"    gorm:"size:255;not null"`
     Role      RoleEnum          `json:"role"        gorm:"type:enum('admin','user');not null;default:'user'"`
+    ImageURL  string          `json:"image_url"   gorm:"size:255;null"`
     CreatedAt time.Time         `json:"created_at"  gorm:"type:datetime;autoCreateTime"`
     UpdatedAt time.Time         `json:"updated_at"  gorm:"type:datetime;autoUpdateTime"`
 }

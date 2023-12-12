@@ -88,7 +88,7 @@ func main() {
 
 	// Handler
 	authHandler := handler.NewAuthHandler(authRepository)
-	userHandler := handler.NewUserHandler(userRepository)
+	userHandler := handler.NewUserHandler(userRepository, configuration.Storage.BucketName, configuration.Storage.Credentials)
 	feedbackHandler := handler.NewFeedbackHandler(feedbackRepository)
 	bansosRegistrationHandler := handler.NewBansosRegistrationHandler(bansosRegistrationRepository)
 	bansosHandler := handler.NewBansosHandler(bansosRepository, configuration.Storage.BucketName, configuration.Storage.Credentials)
@@ -102,8 +102,10 @@ func main() {
 
 	// Middleware Router
 	apiAuth := api.Group("/", authMiddleware)
-	// NOTE: This route is an example middleware route
+
+	// User
 	apiAuth.GET("users", userHandler.GetUserHandler)
+	apiAuth.PUT("users", userHandler.UpdateUserHandler)
 
 	// Bansos
 	apiAuth.POST("bansos", bansosHandler.AddBansosHandler)
