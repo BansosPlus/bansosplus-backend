@@ -145,6 +145,15 @@ func (h *UserHandler) UpdateUserHandler(c echo.Context) error {
 				"message": "Invalid request payload",
 		})
 	} 
+	user.Income = model.IncomeEnum(c.FormValue("income"))
+	user.FloorArea = model.FloorAreaEnum(c.FormValue("floor_area"))
+	user.WallQuality = model.WallQualityEnum(c.FormValue("wall_quality"))
+	user.NumberOfMeals = model.NumberOfMealsEnum(c.FormValue("number_of_meals"))
+	user.Fuel = model.FuelEnum(c.FormValue("fuel"))
+	user.Education = model.EducationEnum(c.FormValue("education"))
+	user.TotalAsset = model.TotalAssetEnum(c.FormValue("total_asset"))
+	user.Treatment = model.TreatmentEnum(c.FormValue("treatment"))
+	user.NumberOfDependents = model.NumberOfDependentsEnum(c.FormValue("number_of_dependents"))
 
 	// Retrieve the file from the form data
 	file, fileHeader, _ := c.Request().FormFile("file")
