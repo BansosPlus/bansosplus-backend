@@ -115,6 +115,14 @@ func (h *UserHandler) UpdateUserHandler(c echo.Context) error {
 	user.Nik = exist_user.Nik
 	user.NoKK = exist_user.NoKK
 	user.Income = exist_user.Income
+	user.FloorArea = exist_user.FloorArea
+	user.WallQuality = exist_user.WallQuality
+	user.NumberOfMeals = exist_user.NumberOfMeals
+	user.Fuel = exist_user.Fuel
+	user.Education = exist_user.Education
+	user.TotalAsset = exist_user.TotalAsset
+	user.Treatment = exist_user.Treatment
+	user.NumberOfDependents = exist_user.NumberOfDependents
 	user.Email = exist_user.Email
 	user.Phone = exist_user.Phone
 	user.Password = exist_user.Password
@@ -174,6 +182,14 @@ func (h *UserHandler) UpdateUserHandler(c echo.Context) error {
 			"no_kk": user.NoKK,
 			"image_url": user.ImageURL,
 			"income": user.Income,
+			"floor_area": user.FloorArea,
+			"wall_quality": user.WallQuality,
+			"number_of_meals": user.NumberOfMeals,
+			"fuel": user.Fuel,
+			"education": user.Education,
+			"total_asset": user.TotalAsset,
+			"treatment": user.Treatment,
+			"number_of_dependents": user.NumberOfDependents,
 		},
 	})
 }
