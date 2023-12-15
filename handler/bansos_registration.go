@@ -61,6 +61,15 @@ func (h *BansosRegistrationHandler) RegisterBansosHandler(c echo.Context) error 
 			"message": "Invalid request payload",
 		})
 	}
+	bansosRegistration.Income = model.IncomeEnum(c.FormValue("income"))
+	bansosRegistration.FloorArea = model.FloorAreaEnum(c.FormValue("floor_area"))
+	bansosRegistration.WallQuality = model.WallQualityEnum(c.FormValue("wall_quality"))
+	bansosRegistration.NumberOfMeals = model.NumberOfMealsEnum(c.FormValue("number_of_meals"))
+	bansosRegistration.Fuel = model.FuelEnum(c.FormValue("fuel"))
+	bansosRegistration.Education = model.EducationEnum(c.FormValue("education"))
+	bansosRegistration.TotalAsset = model.TotalAssetEnum(c.FormValue("total_asset"))
+	bansosRegistration.Treatment = model.TreatmentEnum(c.FormValue("treatment"))
+	bansosRegistration.NumberOfDependents = model.NumberOfDependentsEnum(c.FormValue("number_of_dependents"))
 
 	if err := h.bansosRegistrationRepository.RegisterBansos(&bansosRegistration); err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{

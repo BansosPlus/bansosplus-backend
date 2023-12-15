@@ -25,7 +25,7 @@ type BansosRegistration struct {
 	FloorArea           FloorAreaEnum           `json:"floor_area"              gorm:"type:enum('Diatas 8m²','Dibawah 8m²');null"`
 	WallQuality         WallQualityEnum         `json:"wall_quality"            gorm:"type:enum('Buruk','Normal','Bagus');null"`
 	NumberOfMeals       NumberOfMealsEnum       `json:"number_of_meals"         gorm:"type:enum('0','1','2','3');null"`
-	Fuel                FuelEnum                `json:"fuel"                    gorm:"type:enum('Kayu/ Arang','Gas/ LPG');null"`
+	Fuel                FuelEnum                `json:"fuel"                    gorm:"type:enum('Kayu/Arang','Gas/LPG');null"`
 	Education           EducationEnum           `json:"education"               gorm:"type:enum('SD','SMP','SMA','Sarjana');null"`
 	TotalAsset          TotalAssetEnum          `json:"total_asset"             gorm:"type:enum('<500 ribu','500 ribu-1 juta','1 juta-1.5 juta','>1.5 juta');null"`
 	Treatment           TreatmentEnum           `json:"treatment"               gorm:"type:enum('Mampu','Tidak Mampu');null"`
