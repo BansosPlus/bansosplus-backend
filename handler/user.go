@@ -71,6 +71,14 @@ func (h *UserHandler) GetUserHandler(c echo.Context) error {
 			"no_kk": user.NoKK,
 			"image_url": user.ImageURL,
 			"income": user.Income,
+			"floor_area": user.FloorArea,
+			"wall_quality": user.WallQuality,
+			"number_of_meals": user.NumberOfMeals,
+			"fuel": user.Fuel,
+			"education": user.Education,
+			"total_asset": user.TotalAsset,
+			"treatment": user.Treatment,
+			"number_of_dependents": user.NumberOfDependents,
 		},
 	})
 }
