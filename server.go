@@ -99,8 +99,8 @@ func main() {
 	api.POST("/register", authHandler.Register)
 	api.POST("/login", authHandler.Login)
 	api.GET("/qr-codes/:uuid", qrCodeHandler.GetQRCodeByUUIDHandler)
-	api.PUT("bansos-registration/accept", bansosRegistrationHandler.AcceptBansosRegisHandler)
-	api.PUT("bansos-registration/reject", bansosRegistrationHandler.RejectBansosRegisHandler)
+	api.PUT("/bansos-registration/accept", bansosRegistrationHandler.AcceptBansosRegisHandler)
+	api.PUT("/bansos-registration/reject", bansosRegistrationHandler.RejectBansosRegisHandler)
 
 	// Middleware Router
 	apiAuth := api.Group("/", authMiddleware)
