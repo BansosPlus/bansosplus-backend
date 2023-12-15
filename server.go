@@ -99,6 +99,8 @@ func main() {
 	api.POST("/register", authHandler.Register)
 	api.POST("/login", authHandler.Login)
 	api.GET("/qr-codes/:uuid", qrCodeHandler.GetQRCodeByUUIDHandler)
+	api.PUT("bansos-registration/accept", bansosRegistrationHandler.AcceptBansosRegisHandler)
+	api.PUT("bansos-registration/reject", bansosRegistrationHandler.RejectBansosRegisHandler)
 
 	// Middleware Router
 	apiAuth := api.Group("/", authMiddleware)
@@ -127,8 +129,6 @@ func main() {
 	apiAuth.POST("bansos-registration", bansosRegistrationHandler.RegisterBansosHandler)
 	apiAuth.GET("bansos-registration", bansosRegistrationHandler.GetBansosRegisByIDHandler)
 	apiAuth.GET("bansos-registration/on-progress", bansosRegistrationHandler.GetOnProgressBansosRegisHandler)
-	apiAuth.PUT("bansos-registration/accept", bansosRegistrationHandler.AcceptBansosRegisHandler)
-	apiAuth.PUT("bansos-registration/reject", bansosRegistrationHandler.RejectBansosRegisHandler)
 	apiAuth.PUT("bansos-registration/validate", bansosRegistrationHandler.ValidateBansosRegisHandler)
 
 	// QR Code
