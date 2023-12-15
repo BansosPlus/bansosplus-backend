@@ -95,15 +95,7 @@ func (h *BansosRegistrationHandler) RegisterBansosHandler(c echo.Context) error 
 }
 
 func (h *BansosRegistrationHandler) AcceptBansosRegisHandler(c echo.Context) error {
-	_, ok := c.Get("token").(jwt.MapClaims)
-	if !ok {
-		return c.JSON(http.StatusUnauthorized, echo.Map{
-			"code":    http.StatusUnauthorized,
-			"status":  "error",
-			"message": "Unauthorized",
-		})
-	}
-
+	
 	bansosRegisIDStr := c.QueryParam("bansos_registration_id")
 
 	bansosRegisID, err := strconv.Atoi(bansosRegisIDStr)
@@ -146,15 +138,7 @@ func (h *BansosRegistrationHandler) AcceptBansosRegisHandler(c echo.Context) err
 }
 
 func (h *BansosRegistrationHandler) RejectBansosRegisHandler(c echo.Context) error {
-	_, ok := c.Get("token").(jwt.MapClaims)
-	if !ok {
-		return c.JSON(http.StatusUnauthorized, echo.Map{
-			"code":    http.StatusUnauthorized,
-			"status":  "error",
-			"message": "Unauthorized",
-		})
-	}
-
+	
 	bansosRegisIDStr := c.QueryParam("bansos_registration_id")
 
 	bansosRegisID, err := strconv.Atoi(bansosRegisIDStr)
