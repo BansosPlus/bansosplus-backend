@@ -11,6 +11,7 @@ import (
 
 type BansosRegistrationWithBansos struct {
 	ID         uint   `json:"id"`
+	BansosID   uint   `json:"bansos_id"`
 	BansosName string `json:"bansos_name"`
 	BansosType string `json:"type"`
 	Status     string `json:"status"`
@@ -80,7 +81,7 @@ func (r *BansosRegistrationRepositoryImpl) GetDetailBansosRegisByID(id int) (*De
 func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByUserID(id int, statuses []string) ([]*BansosRegistrationWithBansos, error) {
 	var result []*BansosRegistrationWithBansos
 	rows, err := r.db.Table("bansos_registrations").
-		Select("bansos_registrations.id, bansos.name as bansos_name, bansos.type, bansos_registrations.status, bansos.image_url, bansos_registrations.created_at, bansos_registrations.updated_at").
+		Select("bansos_registrations.id, bansos.id as bansos_id, bansos.name as bansos_name, bansos.type, bansos_registrations.status, bansos.image_url, bansos_registrations.created_at, bansos_registrations.updated_at").
 		Joins("JOIN bansos ON bansos_registrations.bansos_id = bansos.id").
 		Joins("JOIN users ON bansos_registrations.user_id = users.id").
 		Where("bansos_registrations.user_id = ?", id).
@@ -93,7 +94,7 @@ func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByUserID(id int, status
 
 	for rows.Next() {
 		var item BansosRegistrationWithBansos
-		if err := rows.Scan(&item.ID, &item.BansosName, &item.BansosType, &item.Status, &item.ImageUrl, &item.CreatedAt, &item.UpdatedAt); err != nil {
+		if err := rows.Scan(&item.ID, &item.BansosID, &item.BansosName, &item.BansosType, &item.Status, &item.ImageUrl, &item.CreatedAt, &item.UpdatedAt); err != nil {
 			return nil, err
 		}
 		result = append(result, &item)
