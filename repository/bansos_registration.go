@@ -20,6 +20,16 @@ type BansosRegistrationWithBansos struct {
 	UpdatedAt  string `json:"updated_at"`
 }
 
+type BansosRegistrationWithUser struct {
+	ID        uint   `json:"id"`
+	BansosID  uint   `json:"bansos_id"`
+	UserID    uint   `json:"user_id"`
+	UserName  string `json:"user_name"`
+	Status    string `json:"status"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
 type DetailBansosRegistrationWithBansos struct {
 	ID          uint            `json:"id"`
 	BansosName  string          `json:"bansos_name"`
@@ -42,6 +52,7 @@ type BansosRegistrationRepository interface {
 	GetBansosRegisByUserID(id int, statuses []string) ([]*BansosRegistrationWithBansos, error)
 	GetBansosRegisByBansosID(id int) ([]*model.BansosRegistration, error)
 	GetDetailBansosRegisByID(id int) (*DetailBansosRegistrationWithBansos, error)
+	GetBansosRegisWithUser(id int) (*BansosRegistrationWithUser, error)
 }
 
 type BansosRegistrationRepositoryImpl struct {
@@ -138,4 +149,17 @@ func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByBansosID(id int) ([]*
 		return nil, err
 	}
 	return bansosRegistrations, nil
+}
+
+func (r *BansosRegistrationRepositoryImpl) GetBansosRegisWithUser(id int) (*BansosRegistrationWithUser, error) {
+	var result BansosRegistrationWithUser
+	if err := r.db.Table("bansos_registrations").
+		Select("bansos_registrations.id, bansos.id as bansos_id, users.id as user_id, users.name as user_name, bansos_registrations.status, bansos_registrations.created_at, bansos_registrations.updated_at").
+		Joins("JOIN bansos ON bansos_registrations.bansos_id = bansos.id").
+		Joins("JOIN users ON bansos_registrations.user_id = users.id").
+		Where("bansos_registrations.id = ?", id).
+		First(&result).Error; err != nil {
+		return nil, err
+	}
+	return &result, nil
 }

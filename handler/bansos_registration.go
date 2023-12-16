@@ -309,17 +309,22 @@ func (h *BansosRegistrationHandler) ValidateBansosRegisHandler(c echo.Context) e
 			"message": "Failed to validate registration",
 		})
 	}
+
+	bansosRegistrationWithUser, err := h.bansosRegistrationRepository.GetBansosRegisWithUser(bansosRegisID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"code":    http.StatusInternalServerError,
+			"status":  "error",
+			"message": "Registration Not Found",
+		})
+	}
+
 	// Success
 	return c.JSON(http.StatusOK, echo.Map{
 		"code":    http.StatusOK,
 		"status":  "success",
 		"message": "Registration rejected successfully",
-		"data": echo.Map{
-			"bansos_registration_id": bansosRegistration.ID,
-			"user_id":                bansosRegistration.UserID,
-			"bansos_id":              bansosRegistration.BansosID,
-			"status":                 "TAKEN",
-		},
+		"data":    bansosRegistrationWithUser,
 	})
 }
 
