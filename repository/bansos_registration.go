@@ -68,7 +68,7 @@ func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByID(id int) (*model.Ba
 func (r *BansosRegistrationRepositoryImpl) GetDetailBansosRegisByID(id int) (*DetailBansosRegistrationWithBansos, error) {
 	var result DetailBansosRegistrationWithBansos
 	if err := r.db.Table("bansos_registrations").
-		Select("bansos_registrations.id, bansos.name as bansos_name, bansos.type, bansos_registrations.status, bansos_registrations.point, bansos.image_url, bansos_registrations.created_at, bansos_registrations.updated_at").
+		Select("bansos_registrations.id, bansos.name as bansos_name, bansos.type, bansos.description, bansos_registrations.status, bansos_registrations.point, bansos.image_url, bansos_registrations.created_at, bansos_registrations.updated_at").
 		Joins("JOIN bansos ON bansos_registrations.bansos_id = bansos.id").
 		Where("bansos_registrations.id = ?", id).
 		First(&result).Error; err != nil {
