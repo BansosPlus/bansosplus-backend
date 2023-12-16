@@ -20,15 +20,15 @@ type BansosRegistrationWithBansos struct {
 }
 
 type DetailBansosRegistrationWithBansos struct {
-	ID                uint            `json:"id"`
-	BansosName        string          `json:"bansos_name"`
-	BansosType        string          `json:"type"`
-	BansosDescription string          `json:"description"`
-	Status            string          `json:"status"`
-	Point             decimal.Decimal `json:"point"`
-	ImageUrl          string          `json:"image_url"`
-	CreatedAt         string          `json:"created_at"`
-	UpdatedAt         string          `json:"updated_at"`
+	ID          uint            `json:"id"`
+	BansosName  string          `json:"bansos_name"`
+	Type        string          `json:"type"`
+	Description string          `json:"description"`
+	Status      string          `json:"status"`
+	Point       decimal.Decimal `json:"point"`
+	ImageUrl    string          `json:"image_url"`
+	CreatedAt   string          `json:"created_at"`
+	UpdatedAt   string          `json:"updated_at"`
 }
 
 type BansosRegistrationRepository interface {
