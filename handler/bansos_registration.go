@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"fmt"
+	"io/ioutil"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
@@ -15,12 +17,76 @@ import (
 
 type BansosRegistrationHandler struct {
 	bansosRegistrationRepository repository.BansosRegistrationRepository
+	apiMlUrl string
 }
 
-func NewBansosRegistrationHandler(bansosRegistrationRepository repository.BansosRegistrationRepository) *BansosRegistrationHandler {
+func NewBansosRegistrationHandler(bansosRegistrationRepository repository.BansosRegistrationRepository, apiMlUrl string) *BansosRegistrationHandler {
 	return &BansosRegistrationHandler{
 		bansosRegistrationRepository: bansosRegistrationRepository,
+		apiMlUrl: apiMlUrl,
 	}
+}
+
+func valueToIndex(value string, array []string) int {
+	for i, v := range array {
+		if strings.EqualFold(value, v) { // Case-insensitive comparison
+			return i
+		}
+	}
+	return -1 // Return -1 if the value is not found in the array
+}
+
+func generateQueryParams(bansosRegistrationID int, penghasilan, jumlahMakan, berobat, tanggungan, bahanBakar, jumlahAset, luasLantai, jenisDinding, pendidikan string) string {
+	penghasilanArray := []string{"<500 ribu", "500 ribu-1 juta", "1 juta-1.5 juta", ">1.5 juta"}
+	luasLantaiArray := []string{"Diatas 8m²", "Dibawah 8m²"}
+	kualitasDindingArray := []string{"Buruk", "Normal", "Bagus"}
+	jumlahMakanArray := []string{"0", "1", "2", "3"}
+	bahanBakarArray := []string{"Kayu/Arang", "Gas/LPG"}
+	pendidikanArray := []string{"SD", "SMP", "SMA", "Sarjana"}
+	asetArray := []string{"<500 ribu", "500 ribu-1 juta", "1 juta-1.5 juta", ">1.5 juta"}
+	berobatArray := []string{"Mampu", "Tidak Mampu"}
+	tanggunganArray := []string{"0", "1", "2", ">2"}
+
+	penghasilanIndex := valueToIndex(penghasilan, penghasilanArray)
+	jumlahMakanIndex := valueToIndex(jumlahMakan, jumlahMakanArray)
+	berobatIndex := valueToIndex(berobat, berobatArray)
+	tanggunganIndex := valueToIndex(tanggungan, tanggunganArray)
+	bahanBakarIndex := valueToIndex(bahanBakar, bahanBakarArray)
+	jumlahAsetIndex := valueToIndex(jumlahAset, asetArray)
+	luasLantaiIndex := valueToIndex(luasLantai, luasLantaiArray)
+	jenisDindingIndex := valueToIndex(jenisDinding, kualitasDindingArray)
+	pendidikanIndex := valueToIndex(pendidikan, pendidikanArray)
+
+	queryParams := fmt.Sprintf("bansos_registration_id=%d&penghasilan=%d&jumlah_makan=%d&berobat=%d&tanggungan=%d&bahan_bakar=%d&jumlah_aset=%d&luas_lantai=%d&jenis_dinding=%d&pendidikan=%d",
+		bansosRegistrationID, penghasilanIndex, jumlahMakanIndex, berobatIndex, tanggunganIndex, bahanBakarIndex, jumlahAsetIndex, luasLantaiIndex, jenisDindingIndex, pendidikanIndex)
+
+	return queryParams
+}
+
+func processBansosRegistrationToMLAPI(url string) {
+	response, err := http.Post(url, "application/json", nil)
+	if err != nil {
+		fmt.Println("Failed to make request to ML API:", err)
+		return
+	}
+	defer response.Body.Close()
+
+	// Check the response status code
+	if response.StatusCode != http.StatusOK {
+		fmt.Println("Failed to get a successful response from ML API. Status code:", response.StatusCode)
+
+		// Read the error message from the response body
+		errorBody, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			fmt.Println("Failed to read the error response body:", err)
+			return
+		}
+
+		fmt.Println("Error message:", string(errorBody))
+		return
+	}
+
+	fmt.Println("ML request succeeded!")
 }
 
 func (h *BansosRegistrationHandler) RegisterBansosHandler(c echo.Context) error {
@@ -79,6 +145,25 @@ func (h *BansosRegistrationHandler) RegisterBansosHandler(c echo.Context) error 
 				"message": "Failed to accept registration",
 			})
 		}
+	} else {
+		// Make a request to ML API with parameters asynchronously
+    queryParams := generateQueryParams(
+			bansosRegistration.ID, 
+			bansosRegistration.Income,
+			bansosRegistration.NumberOfMeals,
+			bansosRegistration.Treatment,
+			bansosRegistration.NumberOfDependents,
+			bansosRegistration.Fuel,
+			bansosRegistration.TotalAsset,
+			bansosRegistration.FloorArea,
+			bansosRegistration.WallQuality,
+			bansosRegistration.Education,
+		)
+
+    apiMlUrl := fmt.Sprintf("%s?%s", h.apiMlUrl, queryParams)
+		fmt.Println("Sending request to ML API:", apiMlUrl)
+
+    go processBansosRegistrationToMLAPI(apiMlUrl)
 	}
 
 	// Success

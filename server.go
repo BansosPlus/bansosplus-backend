@@ -90,7 +90,7 @@ func main() {
 	authHandler := handler.NewAuthHandler(authRepository)
 	userHandler := handler.NewUserHandler(userRepository, configuration.Storage.BucketName, configuration.Storage.Credentials)
 	feedbackHandler := handler.NewFeedbackHandler(feedbackRepository)
-	bansosRegistrationHandler := handler.NewBansosRegistrationHandler(bansosRegistrationRepository)
+	bansosRegistrationHandler := handler.NewBansosRegistrationHandler(bansosRegistrationRepository, configuration.Api.MlUrl)
 	bansosHandler := handler.NewBansosHandler(bansosRepository, configuration.Storage.BucketName, configuration.Storage.Credentials)
 	qrCodeHandler := handler.NewQRCodeHandler(qrCodeRepository, configuration.Http.Protocol, configuration.Http.Host, configuration.Http.HttpPort)
 

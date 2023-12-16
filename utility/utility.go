@@ -29,11 +29,16 @@ type tsStorage struct {
 	Credentials string `json:"credentials"`
 }
 
+type tsApi struct {
+	MlUrl string `json:"ml_url"`
+}
+
 type Configuration struct {
 	Http     tsHttp     `json:"http"`
 	Database tsDatabase `json:"database"`
 	AppPath	 string     `json:"app_path"`
 	Storage  tsStorage  `json:"storage"`
+	Api			 tsApi			`json:"api"`
 }
 
 var Reset = "\033[0m"
