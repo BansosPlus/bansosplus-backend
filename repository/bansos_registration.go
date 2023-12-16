@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/BansosPlus/bansosplus-backend.git/model"
+	"github.com/shopspring/decimal"
 )
 
 type BansosRegistrationWithBansos struct {
@@ -20,8 +21,8 @@ type BansosRegistrationWithBansos struct {
 
 type BansosRegistrationRepository interface {
 	RegisterBansos(bansosRegistration *model.BansosRegistration) error
-	AcceptBansosRegis(bansosRegistration *model.BansosRegistration) error
-	RejectBansosRegis(bansosRegistration *model.BansosRegistration) error
+	AcceptBansosRegis(bansosRegistration *model.BansosRegistration, point decimal.Decimal) error
+	RejectBansosRegis(bansosRegistration *model.BansosRegistration, point decimal.Decimal) error
 	ValidateBansosRegis(bansosRegistration *model.BansosRegistration) error
 	GetBansosRegisByID(id int) (*model.BansosRegistration, error)
 	GetBansosRegisByStatus(status string) ([]*model.BansosRegistration, error)
@@ -76,17 +77,17 @@ func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByUserID(id int, status
 	return result, nil
 }
 
-func (r *BansosRegistrationRepositoryImpl) AcceptBansosRegis(bansosRegistration *model.BansosRegistration) error {
+func (r *BansosRegistrationRepositoryImpl) AcceptBansosRegis(bansosRegistration *model.BansosRegistration, point decimal.Decimal) error {
 	return r.db.Model(&model.BansosRegistration{}).
 		Where("id = ?", bansosRegistration.ID).
-		Updates(map[string]interface{}{"status": "ACCEPTED", "approval_at": time.Now()}).
+		Updates(map[string]interface{}{"status": "ACCEPTED", "approval_at": time.Now(), "point": point}).
 		Error
 }
 
-func (r *BansosRegistrationRepositoryImpl) RejectBansosRegis(bansosRegistration *model.BansosRegistration) error {
+func (r *BansosRegistrationRepositoryImpl) RejectBansosRegis(bansosRegistration *model.BansosRegistration, point decimal.Decimal) error {
 	return r.db.Model(&model.BansosRegistration{}).
 		Where("id = ?", bansosRegistration.ID).
-		Updates(map[string]interface{}{"status": "REJECTED", "approval_at": time.Now()}).
+		Updates(map[string]interface{}{"status": "REJECTED", "approval_at": time.Now(), "point": point}).
 		Error
 }
 

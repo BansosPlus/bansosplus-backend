@@ -1,29 +1,29 @@
 package repository
 
 import (
-    "gorm.io/gorm"
+	"gorm.io/gorm"
 
-    "github.com/BansosPlus/bansosplus-backend.git/model"
+	"github.com/BansosPlus/bansosplus-backend.git/model"
 )
 
 type QRCodeRepository interface {
 	AddQRCode(qrCode *model.QRCode) error
-    GetQRCodeByID(id int) (*model.QRCode, error)
-    GetQRCodeByUUID(uuid string) (*model.QRCode, error)
+	GetQRCodeByID(id int) (*model.QRCode, error)
+	GetQRCodeByUUID(uuid string) (*model.QRCode, error)
 }
 
 type QRCodeRepositoryImpl struct {
-    db *gorm.DB
+	db *gorm.DB
 }
 
 func NewQRCodeRepository(db *gorm.DB) QRCodeRepository {
-    return &QRCodeRepositoryImpl{
-        db: db,
-    }
+	return &QRCodeRepositoryImpl{
+		db: db,
+	}
 }
 
 func (r *QRCodeRepositoryImpl) AddQRCode(qrCode *model.QRCode) error {
-    return r.db.Create(qrCode).Error
+	return r.db.Create(qrCode).Error
 }
 
 func (r *QRCodeRepositoryImpl) GetQRCodeByID(id int) (*model.QRCode, error) {

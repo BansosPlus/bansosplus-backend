@@ -7,6 +7,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
+	"github.com/shopspring/decimal"
 
 	"github.com/BansosPlus/bansosplus-backend.git/model"
 	"github.com/BansosPlus/bansosplus-backend.git/repository"
@@ -80,7 +81,7 @@ func (h *BansosRegistrationHandler) RegisterBansosHandler(c echo.Context) error 
 	}
 
 	if userRole == "admin" {
-		if err := h.bansosRegistrationRepository.AcceptBansosRegis(&bansosRegistration); err != nil {
+		if err := h.bansosRegistrationRepository.AcceptBansosRegis(&bansosRegistration, decimal.New(1, 0)); err != nil {
 			return c.JSON(http.StatusInternalServerError, echo.Map{
 				"code":    http.StatusInternalServerError,
 				"status":  "error",
@@ -104,10 +105,13 @@ func (h *BansosRegistrationHandler) RegisterBansosHandler(c echo.Context) error 
 }
 
 func (h *BansosRegistrationHandler) AcceptBansosRegisHandler(c echo.Context) error {
-	
+
 	bansosRegisIDStr := c.QueryParam("bansos_registration_id")
+	pointStr := c.QueryParam("point")
 
 	bansosRegisID, err := strconv.Atoi(bansosRegisIDStr)
+	point, err := decimal.NewFromString(pointStr)
+
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{
 			"code":    http.StatusBadRequest,
@@ -125,7 +129,7 @@ func (h *BansosRegistrationHandler) AcceptBansosRegisHandler(c echo.Context) err
 		})
 	}
 
-	if err := h.bansosRegistrationRepository.AcceptBansosRegis(bansosRegistration); err != nil {
+	if err := h.bansosRegistrationRepository.AcceptBansosRegis(bansosRegistration, point); err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"code":    http.StatusInternalServerError,
 			"status":  "error",
@@ -147,10 +151,13 @@ func (h *BansosRegistrationHandler) AcceptBansosRegisHandler(c echo.Context) err
 }
 
 func (h *BansosRegistrationHandler) RejectBansosRegisHandler(c echo.Context) error {
-	
+
 	bansosRegisIDStr := c.QueryParam("bansos_registration_id")
+	pointStr := c.QueryParam("point")
 
 	bansosRegisID, err := strconv.Atoi(bansosRegisIDStr)
+	point, err := decimal.NewFromString(pointStr)
+
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{
 			"code":    http.StatusBadRequest,
@@ -168,7 +175,7 @@ func (h *BansosRegistrationHandler) RejectBansosRegisHandler(c echo.Context) err
 		})
 	}
 
-	if err := h.bansosRegistrationRepository.RejectBansosRegis(bansosRegistration); err != nil {
+	if err := h.bansosRegistrationRepository.RejectBansosRegis(bansosRegistration, point); err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"code":    http.StatusInternalServerError,
 			"status":  "error",
