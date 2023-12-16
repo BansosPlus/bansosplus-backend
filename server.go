@@ -133,7 +133,7 @@ func main() {
 
 	// QR Code
 	apiAuth.POST("qr-codes", qrCodeHandler.CreateQRCodeHandler)
-	apiAuth.GET("qr-codes/show/:id", qrCodeHandler.ShowQRCodeByIDHandler)
+	apiAuth.GET("qr-codes/show", qrCodeHandler.ShowQRCodeByIDHandler)
 
 	e.Logger.Fatal(e.Start(":" + configuration.Http.HttpPort))
 }
