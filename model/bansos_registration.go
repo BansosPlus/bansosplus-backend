@@ -21,15 +21,15 @@ type BansosRegistration struct {
 	Name       string     `json:"name"            gorm:"size:255;null"`
 	Nik        string     `json:"nik"             gorm:"size:255;null"`
 	NoKK       string     `json:"nokk"            gorm:"size:255;not null"`
-	Income             string                 `json:"income"                  gorm:"size:255;null"`
-	FloorArea          string                 `json:"floor_area"              gorm:"size:255;null"`
-	WallQuality        string                 `json:"wall_quality"            gorm:"size:255;null"`
-	NumberOfMeals      string                 `json:"number_of_meals"         gorm:"size:255;null"`
-	Fuel               string                 `json:"fuel"                    gorm:"size:255;null"`
+	Income             string                	`json:"income"                  gorm:"size:255;null"`
+	FloorArea          string                	`json:"floor_area"              gorm:"size:255;null"`
+	WallQuality        string                	`json:"wall_quality"            gorm:"size:255;null"`
+	NumberOfMeals      string                	`json:"number_of_meals"         gorm:"size:255;null"`
+	Fuel               string                	`json:"fuel"                    gorm:"size:255;null"`
 	Education          string                 `json:"education"               gorm:"size:255;null"`
-	TotalAsset         string                 `json:"total_asset"             gorm:"size:255;null"`
-	Treatment          string                 `json:"treatment"               gorm:"size:255;null"`
-	NumberOfDependents string                 `json:"number_of_dependents"    gorm:"size:255;null"`
+	TotalAsset         string                	`json:"total_asset"             gorm:"size:255;null"`
+	Treatment          string                	`json:"treatment"               gorm:"size:255;null"`
+	NumberOfDependents string                	`json:"number_of_dependents"    gorm:"size:255;null"`
 	Status     StatusEnum `json:"status"          gorm:"type:enum('ON_PROGRESS','ACCEPTED','REJECTED','TAKEN');not null;default:'ON_PROGRESS'"`
 	Point			decimal.Decimal `json:"point"      gorm:"type:decimal(10,2);not null;default:0"`
 	ApprovalAt time.Time  `json:"approval_at"     gorm:"type:datetime;autoCreateTime"`
