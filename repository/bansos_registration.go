@@ -19,6 +19,18 @@ type BansosRegistrationWithBansos struct {
 	UpdatedAt  string `json:"updated_at"`
 }
 
+type DetailBansosRegistrationWithBansos struct {
+	ID                uint            `json:"id"`
+	BansosName        string          `json:"bansos_name"`
+	BansosType        string          `json:"type"`
+	BansosDescription string          `json:"description"`
+	Status            string          `json:"status"`
+	Point             decimal.Decimal `json:"point"`
+	ImageUrl          string          `json:"image_url"`
+	CreatedAt         string          `json:"created_at"`
+	UpdatedAt         string          `json:"updated_at"`
+}
+
 type BansosRegistrationRepository interface {
 	RegisterBansos(bansosRegistration *model.BansosRegistration) error
 	AcceptBansosRegis(bansosRegistration *model.BansosRegistration, point decimal.Decimal) error
@@ -28,6 +40,7 @@ type BansosRegistrationRepository interface {
 	GetBansosRegisByStatus(status string) ([]*model.BansosRegistration, error)
 	GetBansosRegisByUserID(id int, statuses []string) ([]*BansosRegistrationWithBansos, error)
 	GetBansosRegisByBansosID(id int) ([]*model.BansosRegistration, error)
+	GetDetailBansosRegisByID(id int) (*DetailBansosRegistrationWithBansos, error)
 }
 
 type BansosRegistrationRepositoryImpl struct {
@@ -50,6 +63,18 @@ func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByID(id int) (*model.Ba
 		return nil, err
 	}
 	return &bansosRegistration, nil
+}
+
+func (r *BansosRegistrationRepositoryImpl) GetDetailBansosRegisByID(id int) (*DetailBansosRegistrationWithBansos, error) {
+	var result DetailBansosRegistrationWithBansos
+	if err := r.db.Table("bansos_registrations").
+		Select("bansos_registrations.id, bansos.name as bansos_name, bansos.type, bansos_registrations.status, bansos_registrations.point, bansos.image_url, bansos_registrations.created_at, bansos_registrations.updated_at").
+		Joins("JOIN bansos ON bansos_registrations.bansos_id = bansos.id").
+		Where("bansos_registrations.id = ?", id).
+		First(&result).Error; err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
 func (r *BansosRegistrationRepositoryImpl) GetBansosRegisByUserID(id int, statuses []string) ([]*BansosRegistrationWithBansos, error) {

@@ -1,11 +1,11 @@
 package handler
 
 import (
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
-	"fmt"
-	"io/ioutil"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
@@ -17,13 +17,13 @@ import (
 
 type BansosRegistrationHandler struct {
 	bansosRegistrationRepository repository.BansosRegistrationRepository
-	apiMlUrl string
+	apiMlUrl                     string
 }
 
 func NewBansosRegistrationHandler(bansosRegistrationRepository repository.BansosRegistrationRepository, apiMlUrl string) *BansosRegistrationHandler {
 	return &BansosRegistrationHandler{
 		bansosRegistrationRepository: bansosRegistrationRepository,
-		apiMlUrl: apiMlUrl,
+		apiMlUrl:                     apiMlUrl,
 	}
 }
 
@@ -147,8 +147,8 @@ func (h *BansosRegistrationHandler) RegisterBansosHandler(c echo.Context) error 
 		}
 	} else {
 		// Make a request to ML API with parameters asynchronously
-    queryParams := generateQueryParams(
-			bansosRegistration.ID, 
+		queryParams := generateQueryParams(
+			bansosRegistration.ID,
 			bansosRegistration.Income,
 			bansosRegistration.NumberOfMeals,
 			bansosRegistration.Treatment,
@@ -160,10 +160,10 @@ func (h *BansosRegistrationHandler) RegisterBansosHandler(c echo.Context) error 
 			bansosRegistration.Education,
 		)
 
-    apiMlUrl := fmt.Sprintf("%s?%s", h.apiMlUrl, queryParams)
+		apiMlUrl := fmt.Sprintf("%s?%s", h.apiMlUrl, queryParams)
 		fmt.Println("Sending request to ML API:", apiMlUrl)
 
-    go processBansosRegistrationToMLAPI(apiMlUrl)
+		go processBansosRegistrationToMLAPI(apiMlUrl)
 	}
 
 	// Success
@@ -487,7 +487,7 @@ func (h *BansosRegistrationHandler) GetBansosRegisByIDHandler(c echo.Context) er
 		})
 	}
 
-	bansosRegistrations, err := h.bansosRegistrationRepository.GetBansosRegisByID(bansosRegisID)
+	bansosRegistrations, err := h.bansosRegistrationRepository.GetDetailBansosRegisByID(bansosRegisID)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"code":    http.StatusInternalServerError,
